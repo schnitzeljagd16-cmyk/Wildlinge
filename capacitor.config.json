@@ -1,0 +1,6 @@
+{
+  "appId": "de.wildlinge.moosedition",
+  "appName": "Wildlinge",
+  "webDir": "app",
+  "android": { "backgroundColor": "#141c17" }
+}

@@ -13,6 +13,11 @@ Die Startseite wählt automatisch die PC- oder Handy-Version. Andere Version wä
 
 Nach dem ersten Start läuft das Spiel auch offline. Spielstände bleiben im Gerät gespeichert und gelten für beide Versionen.
 
+## Android-App (APK)
+Bei jedem Update baut GitHub automatisch eine neue APK. Neueste Version:
+https://github.com/schnitzeljagd16-cmyk/Wildlinge/releases/latest → **Wildlinge.apk** auf dem Handy herunterladen und öffnen
+(beim ersten Mal „Installation aus unbekannten Quellen“ für den Browser erlauben). Updates einfach drüber installieren, Spielstände bleiben.
+
 ## Aufbau
 - `src/wildlinge.html` – Quellcode des Spiels
 - `tools/make_variants.py` – erzeugt PC- und Handy-Version
