@@ -3689,8 +3689,11 @@ async function titleStart(){
    curSlot=i;}}
  else curSlot=0;
  G=freshGame();resetNPCs();
- const d=await menu({items:['LEICHT','NORMAL','SCHWER'],x:40,y:40,w:80,h:38,idx:1,cancel:false,pre(){box(0,96,160,48);text('Wähle die',8,106,INK,8);text('Schwierigkeit.',8,122,INK,8);}});
- G.diff=d;await chooseHero();await cineIntro();
+ let d=1;
+ while(true){d=await menu({items:['LEICHT','NORMAL','SCHWER'],x:40,y:40,w:80,h:38,idx:d<0?1:d,pre(){box(0,96,160,48);text('Wähle die',8,104,INK,8);text('Schwierigkeit.',8,118,INK,8);text('B = zurück',8,132,SUB,6);}});
+  if(d<0){busy=false;if(slots.some(Boolean))return titleStart();return;}
+  G.diff=d;if(await chooseHero()>=0)break;}
+ await cineIntro();
  await tween(14,p=>fade=p);scene='intro';playSong('town');await tween(14,p=>fade=1-p);fade=0;
  for(const l of['Prof. Linde: Hallo! Ich bin Professorin Linde.','Prof. Linde: Willkommen in der Welt der Wildlinge, '+pName()+'!','Prof. Linde: Wildlinge leben überall: im hohen Gras, am Wasser, zwischen Felsen und sogar im Eis.','Prof. Linde: Fünf Arenaleiter warten auf dich: Mila, Hailey, Louis, Emily und Jannik.','Prof. Linde: Mit allen fünf Orden darfst du in die Liga und Champion werden.','Prof. Linde: Doch zuerst bekommst du deinen ersten Wildling.'])await msg(l);
  const opts=['glutfuchs','tropfling','moospelz'];let chosen;
@@ -4141,10 +4144,10 @@ Object.assign(PV,{pg:{c:'#e2463a',s:'#e8689a',p:'#2c3a5a',st:'capL',h:'#7a4626'}
 const HERO=[{n:'FINN',v:0},{n:'LENA',v:'pg'}];
 const PLV=()=>G.girl?'pg':0;
 const pName=()=>G.pname||'Finn';
-function chooseHero(){return menu({items:[0,1],cancel:false,horiz:true,idx:0,custom(m){paperBG();screenHead('WER BIST DU?');
+function chooseHero(){return menu({items:[0,1],horiz:true,idx:0,custom(m){paperBG();screenHead('WER BIST DU?');
   HERO.forEach((h,i)=>{const x=10+i*76,sel=m.idx===i;rr(x,22,64,82,6,sel?'#fff2c0':'rgba(255,255,255,.55)');ctx.globalAlpha=.25;ellipse(ctx,'#000000',x+32,90,16,3);ctx.globalAlpha=1;
    ctx.drawImage(personAt(h.v,'down',0,56),x+4,32,56,56);textC(h.n,x+32,94,sel?INK:SUB,8);if(sel)arrowR(x+4,94.4,R.frame);});
-  box(0,110,160,34);text('Junge oder Mädchen?',8,118,INK,7);text('Wähle mit ◀ ▶ und A.',8,130,SUB,6);}}).then(i=>{G.girl=i===1;G.pname=HERO[i].n.charAt(0)+HERO[i].n.slice(1).toLowerCase();});}
+  box(0,110,160,34);text('Junge oder Mädchen?',8,118,INK,7);text('Wähle mit ◀ ▶ und A. B = zurück.',8,130,SUB,6);}}).then(i=>{if(i<0)return -1;G.girl=i===1;G.pname=HERO[i].n.charAt(0)+HERO[i].n.slice(1).toLowerCase();return i;});}
 
 /* ---- Personen-Stile: Nikolaus, Osterhase, Mädchen mit Mütze ---- */
 {const base=drawPerson;drawPerson=function(g,pv,dir,f){const st=pv.st;
