@@ -101,8 +101,11 @@ canvas#screen{width:100%;height:100%;max-width:100%;max-height:100%;aspect-ratio
 @media (orientation:portrait){.m{grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr auto;grid-template-areas:"scr scr" "lp rp" "mp mp"}
  .scr{width:100vw;height:min(100vw*0.9,62dvh)} canvas#screen{width:auto;height:100%;max-width:100vw}.mp{padding-bottom:14px}}
 /* Querformat: Steuerkreuz links, Bild Mitte, Tasten rechts */
-@media (orientation:landscape){.m{grid-template-columns:1fr auto 1fr;grid-template-rows:1fr;grid-template-areas:"lp scr rp";--dp:clamp(110px,40vh,200px);--ab:clamp(48px,17vh,84px)}
- .scr{height:100dvh;height:100vh} canvas#screen{height:100%;width:auto;max-width:calc(100vw - 2*var(--dp) - 40px)}.mp{display:none}.rp .meta-l{display:flex}}
+@media (orientation:landscape){.m{display:block;--dp:clamp(96px,34vh,170px);--ab:clamp(44px,15vh,76px)}
+ .scr{position:fixed;inset:0;z-index:0} canvas#screen{width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;aspect-ratio:auto;object-fit:fill}
+ .lp{position:fixed;left:calc(env(safe-area-inset-left) + 14px);bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:3;opacity:.6}
+ .rp{position:fixed;right:calc(env(safe-area-inset-right) + 14px);bottom:calc(env(safe-area-inset-bottom) + 8px);z-index:3;opacity:.6;gap:10px}
+ .mp{display:none}.rp .meta-l{display:flex}}
 .rp .meta-l{}
 body.bigpad .m{--dp:clamp(140px,44vmin,240px);--ab:clamp(62px,20vmin,104px)}
 '''
@@ -119,6 +122,7 @@ M_EXTRA='''<script>
 (()=>{const b=document.getElementById('btnSaves'),s=document.getElementById('saves');b.onclick=e=>{e.stopPropagation();s.classList.toggle('open');b.textContent=s.classList.contains('open')?'✕ Schließen':'💾 Spielstand';};
  document.addEventListener('gesturestart',e=>e.preventDefault());document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
  document.addEventListener('touchmove',e=>{if(!e.target.closest('#saves'))e.preventDefault();},{passive:false});})();
+(()=>{const fit=()=>{if(window.__setWide)window.__setWide(innerWidth>innerHeight?144*innerWidth/innerHeight:160);};addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));fit();})();
 </script>'''
 def page(title,meta,css,body,extra):
     return f'''<!doctype html>
@@ -142,7 +146,8 @@ HANDY_S=True
 mo=page('Wildlinge – Handy','<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#141c17">',M_CSS,M_BODY,M_EXTRA)
 OUT=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','app')+'/';os.makedirs(OUT,exist_ok=True)
 open(OUT+'pc.html','w',encoding='utf8').write(pc)
-mo=mo.replace('const S=6,W=160,H=144;','const S=Math.max(3,Math.min(5,Math.ceil(Math.min(innerWidth||400,innerHeight||400)*(window.devicePixelRatio||1)/160))),W=160,H=144;',1)
+assert 'const S=6,H=144;let W=160;' in mo
+mo=mo.replace('const S=6,H=144;let W=160;','const S=Math.max(3,Math.min(5,Math.ceil(Math.min(innerWidth||400,innerHeight||400)*(window.devicePixelRatio||1)/144))),H=144;let W=160;',1)
 open(OUT+'handy.html','w',encoding='utf8').write(mo)
 print('ok',len(pc),len(mo))
 
